@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">MatchChallenge</string>
+        <string name="matchSample">Match</string>
+        <string name="search">Search</string>
+        <string name="special_blend">Special Blend</string>
+        <string name="match_percent">Match %</string>
+</resources>
