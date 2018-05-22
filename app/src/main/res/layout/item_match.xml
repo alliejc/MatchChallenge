@@ -30,7 +30,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/black"
-                android:text="alisonjc"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="5sp"
                 android:fontFamily="sans-serif-medium"
@@ -53,7 +52,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/subtitle_text_grey"
-                    android:text="31"
                     android:fontFamily="sans-serif"
                     android:layout_gravity="center"
                     android:gravity="center" />
@@ -94,8 +92,7 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/black"
                     android:paddingRight="2dp"
-                    android:fontFamily="sans-serif-medium"
-                    android:text="99%"/>
+                    android:fontFamily="sans-serif-medium" />
 
                 <TextView
                     android:layout_width="wrap_content"

@@ -1,6 +1,9 @@
 package com.alisonjc.matchchallenge;
 
+import android.arch.lifecycle.Lifecycle;
+import android.arch.lifecycle.LifecycleObserver;
 import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.OnLifecycleEvent;
 import android.arch.lifecycle.ViewModelProviders;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
@@ -48,6 +51,25 @@ public class MainActivity extends AppCompatActivity {
         };
 
         mModel.getDatumList().observe(this, datumObserver);
+
+        final Observer<TabLayout.Tab> tabObserver = new Observer<TabLayout.Tab>() {
+            @Override
+            public void onChanged(@Nullable TabLayout.Tab tab) {
+                if(tab != null) {
+                    switch (tab.getPosition()) {
+                        case 0:
+                            mTabLayout.getTabAt(tab.getPosition()).select();
+                            mAdapter.updateAdapter(mModel.getDatumList().getValue());
+                            break;
+                        case 1:
+                            mTabLayout.getTabAt(tab.getPosition()).select();
+                            mAdapter.updateAdapter(mModel.getTopSixMatches());
+                            break;
+                    }
+                }
+            }
+        };
+        mModel.getSelectedTab().observe(this, tabObserver);
     }
 
     private void setUpToolbar(){
@@ -68,10 +90,10 @@ public class MainActivity extends AppCompatActivity {
             public void onTabSelected(TabLayout.Tab tab) {
                 switch (tab.getPosition()){
                     case 0:
-                       mAdapter.updateAdapter(mModel.getDatumList().getValue());
+                        mModel.setSelectedTab(tab);
                         break;
                     case 1:
-                        mAdapter.updateAdapter(mModel.getTopSixMatches());
+                        mModel.setSelectedTab(tab);
                         break;
                 }
             }
@@ -86,11 +108,6 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-
-        TabLayout.Tab tab = mTabLayout.getTabAt(0);
-        if (tab != null) {
-            tab.select();
-        }
     }
 
     /*if I had an endpoint to query, I would only store the userId
@@ -104,12 +121,13 @@ public class MainActivity extends AppCompatActivity {
         mAdapter = new MatchAdapter(MainActivity.this, new IMatchSelected() {
             @Override
             public void onSelected(Datum datum) {
+                mAdapter.notifyDataSetChanged();
                 if(!datum.getLiked()){
                     datum.setLiked(true);
-                    mAdapter.updateAdapter(mModel.getDatumList().getValue());
+                    mAdapter.notifyDataSetChanged();
                 } else {
                     datum.setLiked(false);
-                    mAdapter.updateAdapter(mModel.getDatumList().getValue());
+                    mAdapter.notifyDataSetChanged();
                 }
             }
         });

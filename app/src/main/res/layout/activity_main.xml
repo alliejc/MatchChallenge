@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:background="@color/colorPrimary"
-        app:elevation="0dp"
+        android:elevation="2dp"
         app:titleTextAppearance="@style/Toolbar.TitleText">
 
         <android.support.v7.widget.Toolbar
@@ -26,7 +26,6 @@
             app:popupTheme="@style/AppTheme.PopupOverlay"
             app:titleTextAppearance="@style/Toolbar.TitleText">
         </android.support.v7.widget.Toolbar>
-    </android.support.design.widget.AppBarLayout>
 
     <android.support.design.widget.TabLayout
         android:id="@+id/tab_layout"
@@ -36,7 +35,9 @@
         android:background="@color/colorPrimary"
         app:tabIndicatorColor="@color/white"
         app:tabSelectedTextColor="@color/white"
-        app:tabTextColor="@color/background_white">
+        app:tabTextColor="@color/white"
+        app:tabGravity="fill"
+        app:tabMode="fixed">
 
         <android.support.design.widget.TabItem
             android:id="@+id/tab_one"
@@ -50,20 +51,22 @@
             android:layout_height="wrap_content"
             android:text="@string/match_percent" />
     </android.support.design.widget.TabLayout>
+    </android.support.design.widget.AppBarLayout>
+
 
     <android.support.v4.widget.NestedScrollView
         android:id="@+id/scroll_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/tab_layout"
+        android:layout_height="match_parent"
+        android:layout_below="@id/appbar_layout"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/tab_layout">
+        android:layout_height="match_parent">
     </android.support.v7.widget.RecyclerView>
+
     </android.support.v4.widget.NestedScrollView>
 
 </RelativeLayout>

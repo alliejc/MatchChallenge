@@ -44,7 +44,6 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchViewHolder> {
                 mListener.onSelected(datum);
             }
         });
-
     }
 
     public void updateAdapter(List<Datum> list){

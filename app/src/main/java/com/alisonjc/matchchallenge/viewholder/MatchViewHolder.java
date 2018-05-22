@@ -28,23 +28,27 @@ public class MatchViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void onBind(Datum datum, View.OnClickListener listener){
+
         if(datum.getLiked()){
             itemView.setBackground(itemView.getResources().getDrawable(R.drawable.background_selected));
         } else {
             itemView.setBackground(itemView.getResources().getDrawable(R.drawable.background_unselected));
         }
+
         username.setText(datum.getUsername());
         age.setText(String.valueOf(datum.getAge()));
         cityState.setText(String.format("%s, %s", datum.getCityName(), datum.getStateCode()));
         matchPercent.setText(String.format("%s%% ", getPercentageString(datum.getMatch())));
 
         Picasso.with(itemView.getContext())
-                .load(datum.getPhoto().getThumbPaths().getLarge()).error(R.drawable.image_not_available).into(imageView);
+                .load(datum.getPhoto().getThumbPaths().getLarge())
+                .error(R.drawable.image_not_available)
+                .into(imageView);
 
         itemView.setOnClickListener(listener);
     }
 
-    public String getPercentageString(Integer match){
+    private String getPercentageString(Integer match){
         return String.valueOf(match / 100);
     }
 }

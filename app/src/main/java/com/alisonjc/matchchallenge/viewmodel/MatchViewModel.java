@@ -1,10 +1,9 @@
 package com.alisonjc.matchchallenge.viewmodel;
 
-import android.arch.lifecycle.LifecycleObserver;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
-import android.os.AsyncTask;
+import android.support.design.widget.TabLayout;
 import android.util.Log;
 
 import com.alisonjc.matchchallenge.MatchComparator;
@@ -24,6 +23,19 @@ import retrofit2.Response;
 public class MatchViewModel extends ViewModel {
 
     private MutableLiveData<List<Datum>> datumList;
+    private MutableLiveData<TabLayout.Tab> selectedTab;
+
+
+    public LiveData<TabLayout.Tab> getSelectedTab(){
+        if(selectedTab == null){
+            selectedTab = new MutableLiveData<>();
+        }
+        return selectedTab;
+    }
+
+    public void setSelectedTab(TabLayout.Tab tab){
+        selectedTab.setValue(tab);
+    }
 
     public LiveData<List<Datum>> getDatumList() {
         if (datumList == null) {
@@ -33,7 +45,7 @@ public class MatchViewModel extends ViewModel {
         return datumList;
     }
 
-    private List<Datum> getSavedDatum() {
+    private List<Datum> getSavedDatumList() {
         List<Datum> likedList = new ArrayList<>();
         if(datumList != null && datumList.getValue() != null) {
             for (Datum datum : datumList.getValue()) {
@@ -42,14 +54,14 @@ public class MatchViewModel extends ViewModel {
                 }
             }
         }
+        Collections.sort(likedList, new MatchComparator());
         return likedList;
     }
 
     public List<Datum> getTopSixMatches(){
-        List<Datum> likedList = getSavedDatum();
-        Collections.sort(likedList, new MatchComparator());
-        List<Datum> topMatches;
+        List<Datum> likedList = getSavedDatumList();
 
+        List<Datum> topMatches = new ArrayList<>();
         if(likedList.size() < 6){
             topMatches = likedList;
         } else {
@@ -66,8 +78,11 @@ public class MatchViewModel extends ViewModel {
                 @Override
                 public void onResponse(Call<MatchSample> call, Response<MatchSample> response) {
                     if(response.isSuccessful()){
-                        datumList.setValue(response.body().getData());
-                    }
+                        List<Datum> list = response.body().getData();
+                        Collections.sort(list, new MatchComparator());
+
+                        datumList.setValue(list);
+                   }
                 }
 
                 @Override
