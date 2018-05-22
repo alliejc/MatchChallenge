@@ -9,7 +9,6 @@ import com.alisonjc.matchchallenge.R;
 import com.alisonjc.matchchallenge.model.Datum;
 import com.squareup.picasso.Picasso;
 
-
 public class MatchViewHolder extends RecyclerView.ViewHolder {
 
     private ImageView imageView;
@@ -28,23 +27,24 @@ public class MatchViewHolder extends RecyclerView.ViewHolder {
         matchPercent = itemView.findViewById(R.id.percentage_text);
     }
 
-    private String getCityStateString(Datum datum){
-        StringBuilder builder = new StringBuilder();
-        builder.append(datum.getCityName());
-        builder.append(", ");
-        builder.append(datum.getStateCode());
-
-        return builder.toString();
-    }
-
     public void onBind(Datum datum, View.OnClickListener listener){
+        if(datum.getLiked()){
+            itemView.setBackground(itemView.getResources().getDrawable(R.drawable.background_selected));
+        } else {
+            itemView.setBackground(itemView.getResources().getDrawable(R.drawable.background_unselected));
+        }
         username.setText(datum.getUsername());
         age.setText(String.valueOf(datum.getAge()));
-        cityState.setText(getCityStateString(datum));
-        matchPercent.setText(String.valueOf(datum.getMatch()));
-        Picasso.with(itemView.getContext())
-                .load(datum.getPhoto().getBasePath()).error(R.drawable.ic_dot).into(imageView);
+        cityState.setText(String.format("%s, %s", datum.getCityName(), datum.getStateCode()));
+        matchPercent.setText(String.format("%s%% ", getPercentageString(datum.getMatch())));
 
-        listener.onClick(itemView);
+        Picasso.with(itemView.getContext())
+                .load(datum.getPhoto().getThumbPaths().getLarge()).error(R.drawable.image_not_available).into(imageView);
+
+        itemView.setOnClickListener(listener);
+    }
+
+    public String getPercentageString(Integer match){
+        return String.valueOf(match / 100);
     }
 }

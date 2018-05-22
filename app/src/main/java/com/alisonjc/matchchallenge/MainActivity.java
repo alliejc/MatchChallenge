@@ -1,5 +1,8 @@
 package com.alisonjc.matchchallenge;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -8,19 +11,14 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.widget.Toast;
 
 import com.alisonjc.matchchallenge.adapter.MatchAdapter;
 import com.alisonjc.matchchallenge.callback.IMatchSelected;
 import com.alisonjc.matchchallenge.model.Datum;
-import com.alisonjc.matchchallenge.model.MatchSample;
 import com.alisonjc.matchchallenge.network.MatchService;
-import com.alisonjc.matchchallenge.util.SharedPrefHandler;
+import com.alisonjc.matchchallenge.viewmodel.MatchViewModel;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -29,16 +27,27 @@ public class MainActivity extends AppCompatActivity {
     private TabLayout mTabLayout;
     private MatchAdapter mAdapter;
     private MatchService mMatchService;
+    private MatchViewModel mModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mMatchService = MatchService.getMatchService();
 
         setUpToolbar();
         setUpTabs();
         setUpRecyclerView();
+
+        mModel = ViewModelProviders.of(this).get(MatchViewModel.class);
+
+        final Observer<List<Datum>> datumObserver = new Observer<List<Datum>>() {
+            @Override
+            public void onChanged(@Nullable final List<Datum> newDatumList) {
+                mAdapter.updateAdapter(newDatumList);
+            }
+        };
+
+        mModel.getDatumList().observe(this, datumObserver);
     }
 
     private void setUpToolbar(){
@@ -51,30 +60,19 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void getMatches(){
-    Call call = mMatchService.getMatches();
-    call.enqueue(new Callback<MatchSample>() {
-        @Override
-        public void onResponse(Call<MatchSample> call, Response<MatchSample> response) {
-            if(response.isSuccessful()){
-                mAdapter.updateAdapter(response.body().getData());
-            }
-        }
-
-        @Override
-        public void onFailure(Call call, Throwable t) {
-            Log.e(TAG, t.getMessage());
-        }
-    });
-    }
     private void setUpTabs(){
         mTabLayout = findViewById(R.id.tab_layout);
         mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                getMatches();
-                Toast.makeText(MainActivity.this, String.valueOf(tab.getText()), Toast.LENGTH_LONG).show();
-
+                switch (tab.getPosition()){
+                    case 0:
+                       mAdapter.updateAdapter(mModel.getDatumList().getValue());
+                        break;
+                    case 1:
+                        mAdapter.updateAdapter(mModel.loadSavedDatumList());
+                        break;
+                }
             }
 
             @Override
@@ -89,6 +87,10 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /*if I had an endpoint to query, I would only store the userId
+     (or whatever was needed to query OkCupid) and use that to populate
+     the saved matches instead of storing the entire Datum object for each liked user
+     */
     private void setUpRecyclerView(){
         RecyclerView recyclerView = findViewById(R.id.recycler_view);
         GridLayoutManager layoutManager = new GridLayoutManager(MainActivity.this, 2, LinearLayoutManager.VERTICAL, false);
@@ -96,7 +98,13 @@ public class MainActivity extends AppCompatActivity {
         mAdapter = new MatchAdapter(MainActivity.this, new IMatchSelected() {
             @Override
             public void onSelected(Datum datum) {
-                SharedPrefHandler.writeDatumToPrefs(MainActivity.this, datum);
+                if(!datum.getLiked()){
+                    datum.setLiked(true);
+                    mAdapter.updateAdapter(mModel.getDatumList().getValue());
+                } else {
+                    datum.setLiked(false);
+                    mAdapter.updateAdapter(mModel.getDatumList().getValue());
+                }
             }
         });
         recyclerView.setAdapter(mAdapter);

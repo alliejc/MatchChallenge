@@ -1,4 +1,4 @@
-package com.alisonjc.matchchallenge;
+package com.alisonjc.matchchallenge.util;
 
 /**
  * Created by acaldwell on 5/20/18.

@@ -36,7 +36,7 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchViewHolder> {
 
 
     @Override
-    public void onBindViewHolder(@NonNull MatchViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final MatchViewHolder holder, int position) {
         final Datum datum = mList.get(holder.getAdapterPosition());
         holder.onBind(datum, new View.OnClickListener() {
             @Override
