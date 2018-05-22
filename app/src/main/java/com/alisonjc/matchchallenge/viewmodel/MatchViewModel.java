@@ -4,24 +4,25 @@ import android.arch.lifecycle.LifecycleObserver;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
+import android.os.AsyncTask;
 import android.util.Log;
 
+import com.alisonjc.matchchallenge.MatchComparator;
 import com.alisonjc.matchchallenge.model.Datum;
 import com.alisonjc.matchchallenge.model.MatchSample;
 import com.alisonjc.matchchallenge.network.MatchService;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-/**
- * Created by acaldwell on 5/21/18.
- */
 
 public class MatchViewModel extends ViewModel {
+
     private MutableLiveData<List<Datum>> datumList;
 
     public LiveData<List<Datum>> getDatumList() {
@@ -32,9 +33,9 @@ public class MatchViewModel extends ViewModel {
         return datumList;
     }
 
-    public List<Datum> loadSavedDatumList() {
+    private List<Datum> getSavedDatum() {
         List<Datum> likedList = new ArrayList<>();
-        if(datumList != null) {
+        if(datumList != null && datumList.getValue() != null) {
             for (Datum datum : datumList.getValue()) {
                 if (datum.getLiked()) {
                     likedList.add(datum);
@@ -44,10 +45,23 @@ public class MatchViewModel extends ViewModel {
         return likedList;
     }
 
+    public List<Datum> getTopSixMatches(){
+        List<Datum> likedList = getSavedDatum();
+        Collections.sort(likedList, new MatchComparator());
+        List<Datum> topMatches;
+
+        if(likedList.size() < 6){
+            topMatches = likedList;
+        } else {
+            topMatches = likedList.subList(0, 6);
+        }
+        return topMatches;
+    }
+
     private void loadDatumList() {
         MatchService matchService = MatchService.getMatchService();
 
-        Call call = matchService.getMatches();
+        Call<MatchSample> call = matchService.getMatches();
             call.enqueue(new Callback<MatchSample>() {
                 @Override
                 public void onResponse(Call<MatchSample> call, Response<MatchSample> response) {

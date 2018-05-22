@@ -62,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void setUpTabs(){
         mTabLayout = findViewById(R.id.tab_layout);
+
         mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
@@ -70,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
                        mAdapter.updateAdapter(mModel.getDatumList().getValue());
                         break;
                     case 1:
-                        mAdapter.updateAdapter(mModel.loadSavedDatumList());
+                        mAdapter.updateAdapter(mModel.getTopSixMatches());
                         break;
                 }
             }
@@ -85,6 +86,11 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+        TabLayout.Tab tab = mTabLayout.getTabAt(0);
+        if (tab != null) {
+            tab.select();
+        }
     }
 
     /*if I had an endpoint to query, I would only store the userId
