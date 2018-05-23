@@ -29,7 +29,6 @@ public class MainActivity extends AppCompatActivity {
 
     private TabLayout mTabLayout;
     private MatchAdapter mAdapter;
-    private MatchService mMatchService;
     private MatchViewModel mModel;
 
     @Override
@@ -40,7 +39,10 @@ public class MainActivity extends AppCompatActivity {
         setUpToolbar();
         setUpTabs();
         setUpRecyclerView();
+        setUpObservers();
+    }
 
+    private void setUpObservers(){
         mModel = ViewModelProviders.of(this).get(MatchViewModel.class);
 
         final Observer<List<Datum>> datumObserver = new Observer<List<Datum>>() {
@@ -110,10 +112,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    /*if I had an endpoint to query, I would only store the userId
-     (or whatever was needed to query OkCupid) and use that to populate
-     the saved matches instead of storing the entire Datum object for each liked user
-     */
     private void setUpRecyclerView(){
         RecyclerView recyclerView = findViewById(R.id.recycler_view);
         GridLayoutManager layoutManager = new GridLayoutManager(MainActivity.this, 2, LinearLayoutManager.VERTICAL, false);
@@ -121,7 +119,6 @@ public class MainActivity extends AppCompatActivity {
         mAdapter = new MatchAdapter(MainActivity.this, new IMatchSelected() {
             @Override
             public void onSelected(Datum datum) {
-                mAdapter.notifyDataSetChanged();
                 if(!datum.getLiked()){
                     datum.setLiked(true);
                     mAdapter.notifyDataSetChanged();

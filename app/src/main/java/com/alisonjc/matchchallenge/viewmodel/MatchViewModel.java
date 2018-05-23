@@ -21,6 +21,7 @@ import retrofit2.Response;
 
 
 public class MatchViewModel extends ViewModel {
+    private static final String TAG = MatchViewModel.class.getSimpleName();
 
     private MutableLiveData<List<Datum>> datumList;
     private MutableLiveData<TabLayout.Tab> selectedTab;
@@ -87,7 +88,7 @@ public class MatchViewModel extends ViewModel {
 
                 @Override
                 public void onFailure(Call call, Throwable t) {
-                    Log.e("load datum list", t.getMessage());
+                    Log.e(TAG, t.getMessage());
                 }
             });
         }

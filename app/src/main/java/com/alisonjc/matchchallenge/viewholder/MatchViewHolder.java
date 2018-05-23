@@ -16,6 +16,7 @@ public class MatchViewHolder extends RecyclerView.ViewHolder {
     private TextView age;
     private TextView cityState;
     private TextView matchPercent;
+    private View layout;
 
     public MatchViewHolder(View itemView) {
         super(itemView);
@@ -25,25 +26,26 @@ public class MatchViewHolder extends RecyclerView.ViewHolder {
         age = itemView.findViewById(R.id.age_text);
         cityState = itemView.findViewById(R.id.city_state_text);
         matchPercent = itemView.findViewById(R.id.percentage_text);
+        layout = itemView.findViewById(R.id.clickable_layout);
     }
 
     public void onBind(Datum datum, View.OnClickListener listener){
-
-        if(datum.getLiked()){
-            itemView.setBackground(itemView.getResources().getDrawable(R.drawable.background_selected));
-        } else {
-            itemView.setBackground(itemView.getResources().getDrawable(R.drawable.background_unselected));
-        }
-
         username.setText(datum.getUsername());
         age.setText(String.valueOf(datum.getAge()));
         cityState.setText(String.format("%s, %s", datum.getCityName(), datum.getStateCode()));
         matchPercent.setText(String.format("%s%% ", getPercentageString(datum.getMatch())));
 
+        if(datum.getLiked()){
+            layout.setSelected(true);
+        } else {
+            layout.setSelected(false);
+        }
+
         Picasso.with(itemView.getContext())
                 .load(datum.getPhoto().getThumbPaths().getLarge())
                 .error(R.drawable.image_not_available)
                 .into(imageView);
+
 
         itemView.setOnClickListener(listener);
     }
