@@ -1,4 +1,4 @@
-package com.alisonjc.matchchallenge;
+package com.alisonjc.matchchallenge.util;
 
 import com.alisonjc.matchchallenge.model.Datum;
 

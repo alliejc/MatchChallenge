@@ -6,7 +6,7 @@ import android.arch.lifecycle.ViewModel;
 import android.support.design.widget.TabLayout;
 import android.util.Log;
 
-import com.alisonjc.matchchallenge.MatchComparator;
+import com.alisonjc.matchchallenge.util.MatchComparator;
 import com.alisonjc.matchchallenge.model.Datum;
 import com.alisonjc.matchchallenge.model.MatchSample;
 import com.alisonjc.matchchallenge.network.MatchService;

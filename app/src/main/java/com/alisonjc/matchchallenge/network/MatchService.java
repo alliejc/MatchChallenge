@@ -10,7 +10,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class MatchService {
 
     private static MatchService mMatchService;
-    private String mMatchUrl = "https://www.okcupid.com/";
     private final MatchInterface mMatchInterface;
 
     public static MatchService getMatchService() {
@@ -23,6 +22,7 @@ public class MatchService {
     }
 
     public MatchService() {
+        String mMatchUrl = "https://www.okcupid.com/";
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(mMatchUrl)
                 .addConverterFactory(GsonConverterFactory.create())
