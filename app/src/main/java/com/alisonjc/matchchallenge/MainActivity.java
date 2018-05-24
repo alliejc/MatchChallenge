@@ -55,17 +55,17 @@ public class MainActivity extends AppCompatActivity {
 
         mModel.getDatumList().observe(this, datumObserver);
 
-        final Observer<TabLayout.Tab> tabObserver = new Observer<TabLayout.Tab>() {
+        final Observer<Integer> tabObserver = new Observer<Integer>() {
             @Override
-            public void onChanged(@Nullable TabLayout.Tab tab) {
-                if(tab != null) {
-                    switch (tab.getPosition()) {
+            public void onChanged(@Nullable Integer tabIndex) {
+                if(tabIndex != null) {
+                    switch (tabIndex) {
                         case 0:
-                            mTabLayout.getTabAt(tab.getPosition()).select();
+                            mTabLayout.getTabAt(tabIndex).select();
                             mAdapter.updateAdapter(mModel.getDatumList().getValue());
                             break;
                         case 1:
-                            mTabLayout.getTabAt(tab.getPosition()).select();
+                            mTabLayout.getTabAt(tabIndex).select();
                             mAdapter.updateAdapter(mModel.getTopSixMatches());
                             break;
                         default:
@@ -95,10 +95,10 @@ public class MainActivity extends AppCompatActivity {
             public void onTabSelected(TabLayout.Tab tab) {
                 switch (tab.getPosition()){
                     case 0:
-                        mModel.setSelectedTab(tab);
+                        mModel.setSelectedTab(tab.getPosition());
                         break;
                     case 1:
-                        mModel.setSelectedTab(tab);
+                        mModel.setSelectedTab(tab.getPosition());
                         break;
                 }
             }

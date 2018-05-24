@@ -30,17 +30,17 @@ public class MatchViewModel extends ViewModel {
     private static final String TAG = MatchViewModel.class.getSimpleName();
 
     private MutableLiveData<List<Datum>> datumList;
-    private MutableLiveData<TabLayout.Tab> selectedTab;
+    private MutableLiveData<Integer> selectedTab;
 
-    public LiveData<TabLayout.Tab> getSelectedTab(){
+    public LiveData<Integer> getSelectedTab(){
         if(selectedTab == null){
             selectedTab = new MutableLiveData<>();
         }
         return selectedTab;
     }
 
-    public void setSelectedTab(TabLayout.Tab tab){
-        selectedTab.setValue(tab);
+    public void setSelectedTab(Integer tabIndex){
+        selectedTab.setValue(tabIndex);
     }
 
     public LiveData<List<Datum>> getDatumList() {
