@@ -1,5 +1,9 @@
 package com.alisonjc.matchchallenge.viewholder;
 
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
@@ -7,6 +11,11 @@ import android.widget.TextView;
 
 import com.alisonjc.matchchallenge.R;
 import com.alisonjc.matchchallenge.model.Datum;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.DrawableImageViewTarget;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
+import com.squareup.picasso.LruCache;
 import com.squareup.picasso.Picasso;
 
 public class MatchViewHolder extends RecyclerView.ViewHolder {
@@ -49,6 +58,13 @@ public class MatchViewHolder extends RecyclerView.ViewHolder {
 
         itemView.setOnClickListener(listener);
     }
+
+//    private void loadImage(Datum datum){
+//        Glide.with(itemView.getContext())
+//            .asBitmap()
+//            .load(datum.getPhoto().getThumbPaths().getLarge())
+//            .into(imageView);
+//    }
 
     private String getPercentageString(Integer match){
         return String.valueOf(match / 100);

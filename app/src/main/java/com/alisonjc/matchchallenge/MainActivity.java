@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
         setUpObservers();
     }
 
+
     private void setUpObservers(){
         mModel = ViewModelProviders.of(this).get(MatchViewModel.class);
 
@@ -66,6 +67,8 @@ public class MainActivity extends AppCompatActivity {
                         case 1:
                             mTabLayout.getTabAt(tab.getPosition()).select();
                             mAdapter.updateAdapter(mModel.getTopSixMatches());
+                            break;
+                        default:
                             break;
                     }
                 }

@@ -3,6 +3,10 @@ package com.alisonjc.matchchallenge.viewmodel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
+import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.design.widget.TabLayout;
 import android.util.Log;
 
@@ -10,6 +14,8 @@ import com.alisonjc.matchchallenge.util.MatchComparator;
 import com.alisonjc.matchchallenge.model.Datum;
 import com.alisonjc.matchchallenge.model.MatchSample;
 import com.alisonjc.matchchallenge.network.MatchService;
+import com.squareup.picasso.LruCache;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,7 +31,6 @@ public class MatchViewModel extends ViewModel {
 
     private MutableLiveData<List<Datum>> datumList;
     private MutableLiveData<TabLayout.Tab> selectedTab;
-
 
     public LiveData<TabLayout.Tab> getSelectedTab(){
         if(selectedTab == null){
@@ -81,6 +86,8 @@ public class MatchViewModel extends ViewModel {
                     if(response.isSuccessful()){
                         List<Datum> list = response.body().getData();
                         Collections.sort(list, new MatchComparator());
+
+
 
                         datumList.setValue(list);
                    }
