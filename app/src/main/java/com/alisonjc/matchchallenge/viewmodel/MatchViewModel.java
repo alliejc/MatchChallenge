@@ -21,6 +21,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -76,27 +79,40 @@ public class MatchViewModel extends ViewModel {
         return topMatches;
     }
 
-    private void loadDatumList() {
+    private void loadDatumList(){
         MatchService matchService = MatchService.getMatchService();
 
-        Call<MatchSample> call = matchService.getMatches();
-            call.enqueue(new Callback<MatchSample>() {
-                @Override
-                public void onResponse(Call<MatchSample> call, Response<MatchSample> response) {
-                    if(response.isSuccessful()){
-                        List<Datum> list = response.body().getData();
-                        Collections.sort(list, new MatchComparator());
+        Observable<MatchSample> o = matchService.getMatches();
+        o.subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(matchSample -> {
+                    List<Datum> list = matchSample.getData();
+                    Collections.sort(list, new MatchComparator());
+                    datumList.setValue(list);
+                }, throwable ->
+                    System.out.print(throwable.getMessage())
+                );
+    }
 
-
-
-                        datumList.setValue(list);
-                   }
-                }
-
-                @Override
-                public void onFailure(Call call, Throwable t) {
-                    Log.e(TAG, t.getMessage());
-                }
-            });
-        }
+//    private void loadDatumList() {
+//        MatchService matchService = MatchService.getMatchService();
+//
+//        Call<MatchSample> call = matchService.getMatches();
+//            call.enqueue(new Callback<MatchSample>() {
+//                @Override
+//                public void onResponse(Call<MatchSample> call, Response<MatchSample> response) {
+//                    if(response.isSuccessful()){
+//                        List<Datum> list = response.body().getData();
+//                        Collections.sort(list, new MatchComparator());
+//
+//                        datumList.setValue(list);
+//                   }
+//                }
+//
+//                @Override
+//                public void onFailure(Call call, Throwable t) {
+//                    Log.e(TAG, t.getMessage());
+//                }
+//            });
+//        }
 }

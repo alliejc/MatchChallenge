@@ -3,19 +3,31 @@ package com.alisonjc.matchchallenge;
 import android.app.Application;
 import android.content.Context;
 
+import com.alisonjc.matchchallenge.injection.AppComponent;
+import com.alisonjc.matchchallenge.injection.AppModule;
+import com.alisonjc.matchchallenge.injection.DaggerAppComponent;
 import com.facebook.stetho.Stetho;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
 
 
 public class BaseApplication extends Application{
+    private static BaseApplication instance;
 
+    public static BaseApplication getInstance() {
+        return instance;
+    }
+    protected AppComponent appComponent;
     private RefWatcher refWatcher;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        Stetho.initializeWithDefaults(this);
+        instance = this;
+        appComponent = DaggerAppComponent.builder()
+                .appModule(new AppModule(this))
+                .build();
+        appComponent.inject(this);
 
         if (LeakCanary.isInAnalyzerProcess(this)) {
             // This process is dedicated to LeakCanary for heap analysis.
@@ -23,6 +35,11 @@ public class BaseApplication extends Application{
             return;
         }
         LeakCanary.install(this);
+    }
+
+
+    public AppComponent getAppComponent() {
+        return appComponent;
     }
 
     public static RefWatcher getRefWatcher(Context context) {

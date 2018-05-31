@@ -18,7 +18,6 @@ import android.support.v7.widget.Toolbar;
 import com.alisonjc.matchchallenge.adapter.MatchAdapter;
 import com.alisonjc.matchchallenge.callback.IMatchSelected;
 import com.alisonjc.matchchallenge.model.Datum;
-import com.alisonjc.matchchallenge.network.MatchService;
 import com.alisonjc.matchchallenge.viewmodel.MatchViewModel;
 
 import java.util.List;
@@ -34,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        BaseApplication.getInstance().getAppComponent().inject(this);
         setContentView(R.layout.activity_main);
 
         setUpToolbar();
