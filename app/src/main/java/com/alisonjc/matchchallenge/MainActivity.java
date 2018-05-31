@@ -16,6 +16,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 
 import com.alisonjc.matchchallenge.adapter.MatchAdapter;
+import com.alisonjc.matchchallenge.callback.ICancelCallback;
 import com.alisonjc.matchchallenge.callback.IMatchSelected;
 import com.alisonjc.matchchallenge.model.Datum;
 import com.alisonjc.matchchallenge.network.MatchService;
@@ -115,6 +116,16 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+//    public void updateLikedUi(){
+//        if(!datum.getLiked()){
+//                    datum.setLiked(true);
+//                    mAdapter.notifyDataSetChanged();
+//                } else {
+//                    datum.setLiked(false);
+//                    mAdapter.notifyDataSetChanged();
+//                }
+//    }
+
     private void setUpRecyclerView(){
         RecyclerView recyclerView = findViewById(R.id.recycler_view);
         GridLayoutManager layoutManager = new GridLayoutManager(MainActivity.this, 2, LinearLayoutManager.VERTICAL, false);
@@ -122,13 +133,13 @@ public class MainActivity extends AppCompatActivity {
         mAdapter = new MatchAdapter(MainActivity.this, new IMatchSelected() {
             @Override
             public void onSelected(Datum datum) {
-                if(!datum.getLiked()){
-                    datum.setLiked(true);
-                    mAdapter.notifyDataSetChanged();
-                } else {
-                    datum.setLiked(false);
-                    mAdapter.notifyDataSetChanged();
-                }
+                mModel.addTimer(datum);
+                mAdapter.notifyDataSetChanged();
+            }
+        }, new ICancelCallback(){
+            @Override
+            public void onCancelClicked(Datum datum) {
+                mModel.cancelLike(datum.getUserid());
             }
         });
         recyclerView.setAdapter(mAdapter);

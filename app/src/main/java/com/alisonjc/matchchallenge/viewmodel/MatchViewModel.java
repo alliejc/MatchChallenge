@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Handler;
 import android.support.design.widget.TabLayout;
 import android.util.Log;
 
@@ -19,6 +20,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 import retrofit2.Call;
@@ -31,6 +33,10 @@ public class MatchViewModel extends ViewModel {
 
     private MutableLiveData<List<Datum>> datumList;
     private MutableLiveData<Integer> selectedTab;
+    private int mTimerCounter = 0;
+    private Handler mCancelHandler = new Handler();
+    private HashMap<String, Runnable> mTimerMap = new HashMap<>();
+
 
     public LiveData<Integer> getSelectedTab(){
         if(selectedTab == null){
@@ -76,6 +82,26 @@ public class MatchViewModel extends ViewModel {
         return topMatches;
     }
 
+    public void addTimer(Datum datum){
+        datum.setHasTimer(true);
+        Runnable r = new Runnable() {
+            @Override
+            public void run() {
+                datum.setLiked(true);
+                datum.setHasTimer(false);
+                datumList.setValue(datumList.getValue());
+                mCancelHandler.removeCallbacks(this);
+            }
+        };
+
+        mTimerMap.put(datum.getUserid(), r);
+        mCancelHandler.postDelayed(r, 5000);
+    }
+
+    public void cancelLike(String userId){
+        mCancelHandler.removeCallbacks(mTimerMap.get(userId));
+    }
+
     private void loadDatumList() {
         MatchService matchService = MatchService.getMatchService();
 
@@ -86,8 +112,6 @@ public class MatchViewModel extends ViewModel {
                     if(response.isSuccessful()){
                         List<Datum> list = response.body().getData();
                         Collections.sort(list, new MatchComparator());
-
-
 
                         datumList.setValue(list);
                    }

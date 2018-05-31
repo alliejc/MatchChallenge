@@ -2,10 +2,12 @@ package com.alisonjc.matchchallenge.viewholder;
 
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -26,6 +28,7 @@ public class MatchViewHolder extends RecyclerView.ViewHolder {
     private TextView cityState;
     private TextView matchPercent;
     private View layout;
+    public Button cancelButton;
 
     public MatchViewHolder(View itemView) {
         super(itemView);
@@ -36,9 +39,10 @@ public class MatchViewHolder extends RecyclerView.ViewHolder {
         cityState = itemView.findViewById(R.id.city_state_text);
         matchPercent = itemView.findViewById(R.id.percentage_text);
         layout = itemView.findViewById(R.id.clickable_layout);
+        cancelButton = itemView.findViewById(R.id.cancel_button);
     }
 
-    public void onBind(Datum datum, View.OnClickListener listener){
+    public void onBind(Datum datum, View.OnClickListener listener, View.OnClickListener cancelListener){
         username.setText(datum.getUsername());
         age.setText(String.valueOf(datum.getAge()));
         cityState.setText(String.format("%s, %s", datum.getCityName(), datum.getStateCode()));
@@ -50,21 +54,20 @@ public class MatchViewHolder extends RecyclerView.ViewHolder {
             layout.setSelected(false);
         }
 
+        if(datum.getHasTimer()){
+            cancelButton.setVisibility(View.VISIBLE);
+        } else {
+            cancelButton.setVisibility(View.GONE);
+        }
+
         Picasso.with(itemView.getContext())
                 .load(datum.getPhoto().getThumbPaths().getLarge())
                 .error(R.drawable.image_not_available)
                 .into(imageView);
 
-
+        cancelButton.setOnClickListener(cancelListener);
         itemView.setOnClickListener(listener);
     }
-
-//    private void loadImage(Datum datum){
-//        Glide.with(itemView.getContext())
-//            .asBitmap()
-//            .load(datum.getPhoto().getThumbPaths().getLarge())
-//            .into(imageView);
-//    }
 
     private String getPercentageString(Integer match){
         return String.valueOf(match / 100);

@@ -76,6 +76,7 @@ public class Datum {
     @SerializedName("orientation_tags")
     @Expose
     private List<Object> orientationTags = null;
+    private Boolean hasTimer = false;
 
     public Integer getEnemy() {
         return enemy;
@@ -261,4 +262,11 @@ public class Datum {
         this.orientationTags = orientationTags;
     }
 
+    public Boolean getHasTimer() {
+        return hasTimer;
+    }
+
+    public void setHasTimer(Boolean hasTimer) {
+        this.hasTimer = hasTimer;
+    }
 }

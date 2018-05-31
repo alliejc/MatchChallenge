@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.alisonjc.matchchallenge.R;
+import com.alisonjc.matchchallenge.callback.ICancelCallback;
 import com.alisonjc.matchchallenge.callback.IMatchSelected;
 import com.alisonjc.matchchallenge.model.Datum;
 import com.alisonjc.matchchallenge.viewholder.MatchViewHolder;
@@ -19,11 +20,13 @@ import java.util.List;
 public class MatchAdapter extends RecyclerView.Adapter<MatchViewHolder> {
     private List<Datum> mList = new ArrayList<Datum>();
     private IMatchSelected mListener;
+    private ICancelCallback mCancelListener;
     private Context mContext;
 
-    public MatchAdapter(Context context, IMatchSelected listener) {
+    public MatchAdapter(Context context, IMatchSelected listener, ICancelCallback cancelListener) {
         mListener = listener;
         mContext = context;
+        mCancelListener = cancelListener;
     }
 
     @NonNull
@@ -42,6 +45,12 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchViewHolder> {
             @Override
             public void onClick(View v) {
                 mListener.onSelected(datum);
+            }
+        }, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mCancelListener.onCancelClicked(datum);
+                holder.cancelButton.setVisibility(View.GONE);
             }
         });
     }
