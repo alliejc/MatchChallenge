@@ -33,22 +33,11 @@ public class MatchViewModel extends ViewModel {
 
     private MutableLiveData<List<Datum>> datumList;
     private MutableLiveData<Integer> selectedTab;
-    private int mTimerCounter = 0;
     private Handler mCancelHandler = new Handler();
     private HashMap<String, Runnable> mTimerMap = new HashMap<>();
 
 
-    public LiveData<Integer> getSelectedTab(){
-        if(selectedTab == null){
-            selectedTab = new MutableLiveData<>();
-        }
-        return selectedTab;
-    }
-
-    public void setSelectedTab(Integer tabIndex){
-        selectedTab.setValue(tabIndex);
-    }
-
+    //DATUM LIST
     public LiveData<List<Datum>> getDatumList() {
         if (datumList == null) {
             datumList = new MutableLiveData<List<Datum>>();
@@ -82,6 +71,29 @@ public class MatchViewModel extends ViewModel {
         return topMatches;
     }
 
+    private void loadDatumList() {
+        MatchService matchService = MatchService.getMatchService();
+
+        Call<MatchSample> call = matchService.getMatches();
+        call.enqueue(new Callback<MatchSample>() {
+            @Override
+            public void onResponse(Call<MatchSample> call, Response<MatchSample> response) {
+                if(response.isSuccessful()){
+                    List<Datum> list = response.body().getData();
+                    Collections.sort(list, new MatchComparator());
+
+                    datumList.setValue(list);
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, Throwable t) {
+                Log.e(TAG, t.getMessage());
+            }
+        });
+    }
+
+    //LIKED
     public void addTimer(Datum datum){
         datum.setHasTimer(true);
         Runnable r = new Runnable() {
@@ -102,25 +114,15 @@ public class MatchViewModel extends ViewModel {
         mCancelHandler.removeCallbacks(mTimerMap.get(userId));
     }
 
-    private void loadDatumList() {
-        MatchService matchService = MatchService.getMatchService();
-
-        Call<MatchSample> call = matchService.getMatches();
-            call.enqueue(new Callback<MatchSample>() {
-                @Override
-                public void onResponse(Call<MatchSample> call, Response<MatchSample> response) {
-                    if(response.isSuccessful()){
-                        List<Datum> list = response.body().getData();
-                        Collections.sort(list, new MatchComparator());
-
-                        datumList.setValue(list);
-                   }
-                }
-
-                @Override
-                public void onFailure(Call call, Throwable t) {
-                    Log.e(TAG, t.getMessage());
-                }
-            });
+    //TAB
+    public LiveData<Integer> getSelectedTab(){
+        if(selectedTab == null){
+            selectedTab = new MutableLiveData<>();
         }
+        return selectedTab;
+    }
+
+    public void setSelectedTab(Integer tabIndex){
+        selectedTab.setValue(tabIndex);
+    }
 }

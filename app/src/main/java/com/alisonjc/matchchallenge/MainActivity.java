@@ -116,16 +116,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-//    public void updateLikedUi(){
-//        if(!datum.getLiked()){
-//                    datum.setLiked(true);
-//                    mAdapter.notifyDataSetChanged();
-//                } else {
-//                    datum.setLiked(false);
-//                    mAdapter.notifyDataSetChanged();
-//                }
-//    }
-
     private void setUpRecyclerView(){
         RecyclerView recyclerView = findViewById(R.id.recycler_view);
         GridLayoutManager layoutManager = new GridLayoutManager(MainActivity.this, 2, LinearLayoutManager.VERTICAL, false);
